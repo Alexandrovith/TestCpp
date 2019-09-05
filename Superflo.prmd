@@ -1,0 +1,5 @@
+{"DeviceName":"DevSF","RequestName":"R34","ParamName":"Contract_Hour","Type":"byte","ParamsOutList":[{"Value":"1"}]}
+{"DeviceName":"DevSF","RequestName":"R42","ParamName":"Tap_Location","Type":"byte","ParamsOutList":[{"Name":"RunNumber","Value":"1"}]}
+{"DeviceName":"DevSF","RequestName":"R42","ParamName":"Gas_Density","Type":"float","ParamsOutList":[{"Name":"RunNumber","Value":"1"}]}
+{"DeviceName":"DevSF","RequestName":"R42","ParamName":"Mole_Percent_CO2","Type":"float","ParamsOutList":[{"Name":"RunNumber","Value":"1"}]}
+{"DeviceName":"DevSF","RequestName":"R35","ParamName":"Contract_Hour","Type":"byte","ParamsOutList":[{"Name":"SuperFlo_Write_Password","Value":"%SuperFlo_Write_Password%"},{"Value":"1"}]}
