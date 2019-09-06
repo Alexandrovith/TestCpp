@@ -135,23 +135,31 @@ namespace TestCpp
 		for each (CDataForWr^ item in DataForWr)
 		{
 			size_t uiSizeData = 256;
+			BYTE* btpVal;
 			try
 			{
+				std::string csVal = CConvMarsh::Convert(item->asData);
+				float fVal; int iVal; BYTE btVal;
+
 				cli::array<BYTE>^ Val;
 				if (item->asType == "float")
 				{
 					uiSizeData = sizeof (float);
-					Val = BitConverter::GetBytes (Convert::ToSingle (item->asData));
+					fVal = std::stof (csVal);					//Val = BitConverter::GetBytes (Convert::ToSingle (item->asData));
+					btpVal = (BYTE*)&fVal;
 				}
 				else if (item->asType == "byte")
 				{
 					uiSizeData = 1;
-					Val = BitConverter::GetBytes (Convert::ToByte (item->asData));
+					//std::static_pointer_cast<BYTE>(	//Val = BitConverter::GetBytes (Convert::ToByte (item->asData));
+					btVal = std::stoi (csVal);
+					btpVal = (BYTE*)&btVal;
 				}
 				else if (item->asType == "int")
 				{
 					uiSizeData = 4;
-					Val = BitConverter::GetBytes (Convert::ToInt32 (item->asData));
+					btVal = std::stoi (csVal);
+					btpVal = (BYTE*)&iVal; //Val = BitConverter::GetBytes (Convert::ToInt32 (item->asData));
 				}
 				//else if (asTypeData == "string")
 				//{
@@ -163,12 +171,12 @@ namespace TestCpp
 					continue;
 				}
 
-				std::unique_ptr<BYTE[]> btVal (new BYTE[uiSizeData]);
-				for (size_t i = 0; i < uiSizeData; i++)
-				{
-					btVal[i++] = Val[i];
-				}
-				int iRet = Device->Write (CConvMarsh::Convert (item->asTag), btVal.get (), uiSizeData);
+				//std::unique_ptr<BYTE[]> btVal (new BYTE[uiSizeData]);
+				//for (size_t i = 0; i < uiSizeData; i++)
+				//{
+				//	btVal[i++] = (int)Val[i];
+				//}
+				int iRet = Device->Write (CConvMarsh::Convert (item->asTag), btpVal, uiSizeData);//btVal.get ()
 				OutMess (String::Format ("[{0}] Запись {1} в [{2}]", Device->DevName, item->asData, item->asTag));
 			}
 			catch (System::Exception ^exc)

@@ -28,9 +28,7 @@ namespace TestCpp
 					asLine = SR->ReadLine ();
 					if (asLine != nullptr)
 					{
-						//cli::array<System::String^, 1>^ asaTag = asLine->Split (';');
 						FindPair->InitTag (asLine);
-						//String^ asms = FindPair->operator[]("RequestName");
 						if (RequestNamesWr->Contains (FindPair->operator[]("RequestName")))
 						{																											// ƒобавление тега дл€ записи параметра 
 							AddParamRow (PanelOutWr, FindPair, iNumParWr - START_TAG_ID_WR, iNumParWr);
@@ -85,7 +83,6 @@ namespace TestCpp
 				Row->asRunNumber = "\"Name\":\"RunNumber\",";
 			else Row->asRunNumber = "";
 		}
-		//Row->asRunNumber = FindPair->operator[]("Name")->Length == 0 ? "" : "\"Name\":\"\",";
 	}
 	//___________________________________________________________________________
 
