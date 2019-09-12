@@ -3,16 +3,22 @@
 
 #include "ManagedConvert.h"
 #include "WorkOfDevs.h"
+#include "Device.h"
 
 namespace TestCpp
 {
 	//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-	CWorkOfDevs::CWorkOfDevs (DNewDev^ NewDev, LPCWSTR cpDllName, DOutMess^ OutMess, CTags^ TagsContainer)
+	CWorkOfDevs::CWorkOfDevs (DOutMess^ OutMess, CTags^ TagsContainer)
 	{
 		this->OutMess = OutMess;
 		this->TagsContainer = TagsContainer;
 		TrReadDrv->Tick += gcnew System::EventHandler (this, &TestCpp::CWorkOfDevs::TrRdVals_OnTick);
+	}
+	//___________________________________________________________________________
+
+	void CWorkOfDevs::Init (DNewDev^ NewDev, const LPCWSTR cpDllName, DRButBlink^ RButBlink)
+	{
 
 		if (Device == nullptr)
 		{
@@ -26,6 +32,7 @@ namespace TestCpp
 				OutMess (Device->DevName + ": " + CConvMarsh::Convert (exc.what ()));
 				return;
 			}
+			this->RButBlink = RButBlink;
 			OutMess (Device->DevName + ": dll загружена");
 		}
 	}
@@ -87,43 +94,53 @@ namespace TestCpp
 	}
 	///___________________________________________________________________________
 
-	union UToFl
+	union UToType
 	{
 		int32_t iVal;
 		float fVal;
 		char ucaVal[64];
 	};
+	//............................................................................
+
 	void TestCpp::CWorkOfDevs::TrRdVals_OnTick (System::Object^ sender, System::EventArgs^ e)
 	{
-		//UCHAR ucaVal[64];
-		UToFl ToFl;
+		UToType ToType;
 		for each (System::Collections::DictionaryEntry item in Tags)
 		{
 			int iId = (int)item.Key;
-			int iLen = GetValue (iId, (UCHAR*)ToFl.ucaVal);
+			int iLen = GetValue (iId, (UCHAR*)ToType.ucaVal);
 			if (iLen == 0)
-				return;
+			{
+				TagsContainer->OutVal (iId, "***");
+				continue;
+			}
 			System::String^ asType = TagsContainer->GetType (iId);
 			System::String^ asRet;
-			//strncpy_s (ToFl.ucaVal, iLen, (char*)ucaVal, iLen);
+
 			if (asType == "byte")
 			{
-				asRet = Convert::ToString (ToFl.ucaVal[0]);
+				asRet = Convert::ToString (ToType.ucaVal[0]);
 			}
 			else if (asType == "int")
 			{
-				asRet = Convert::ToString (ToFl.iVal);
+				asRet = Convert::ToString (ToType.iVal);
 			}
 			else if (asType == "float")
 			{
-				asRet = Convert::ToString (ToFl.fVal);
+				asRet = Convert::ToString (ToType.fVal);
 			}
 			else if (asType == "string")
 			{
-				asRet = Convert::ToString (ToFl.ucaVal);
+				asRet = Convert::ToString (ToType.ucaVal);
+			}
+			else
+			{
+				TagsContainer->OutVal (iId, "Err type");
+				continue;
 			}
 			TagsContainer->OutVal (iId, asRet);
 		}
+		RButBlink ();
 	}
 	///___________________________________________________________________________
 	
@@ -134,24 +151,22 @@ namespace TestCpp
 
 		for each (CDataForWr^ item in DataForWr)
 		{
-			size_t uiSizeData = 256;
-			BYTE* btpVal;
 			try
 			{
+				size_t uiSizeData = 256;
+				BYTE* btpVal;
 				std::string csVal = CConvMarsh::Convert(item->asData);
 				float fVal; int iVal; BYTE btVal;
 
-				cli::array<BYTE>^ Val;
 				if (item->asType == "float")
 				{
 					uiSizeData = sizeof (float);
-					fVal = std::stof (csVal);					//Val = BitConverter::GetBytes (Convert::ToSingle (item->asData));
+					fVal = std::stof (csVal);
 					btpVal = (BYTE*)&fVal;
 				}
 				else if (item->asType == "byte")
 				{
 					uiSizeData = 1;
-					//std::static_pointer_cast<BYTE>(	//Val = BitConverter::GetBytes (Convert::ToByte (item->asData));
 					btVal = std::stoi (csVal);
 					btpVal = (BYTE*)&btVal;
 				}
@@ -159,7 +174,7 @@ namespace TestCpp
 				{
 					uiSizeData = 4;
 					btVal = std::stoi (csVal);
-					btpVal = (BYTE*)&iVal; //Val = BitConverter::GetBytes (Convert::ToInt32 (item->asData));
+					btpVal = (BYTE*)&iVal;
 				}
 				//else if (asTypeData == "string")
 				//{
@@ -170,13 +185,7 @@ namespace TestCpp
 					OutMess (String::Format ("[{0}]) неизвестный тип параметра [{1}]", Device->DevName, item->asType));
 					continue;
 				}
-
-				//std::unique_ptr<BYTE[]> btVal (new BYTE[uiSizeData]);
-				//for (size_t i = 0; i < uiSizeData; i++)
-				//{
-				//	btVal[i++] = (int)Val[i];
-				//}
-				int iRet = Device->Write (CConvMarsh::Convert (item->asTag), btpVal, uiSizeData);//btVal.get ()
+				int iRet = Device->Write (CConvMarsh::Convert (item->asTag), btpVal, uiSizeData);
 				OutMess (String::Format ("[{0}] Запись {1} в [{2}]", Device->DevName, item->asData, item->asTag));
 			}
 			catch (System::Exception ^exc)

@@ -23,6 +23,7 @@ namespace TestCpp
 		PDOutMess = gcnew DOutMess (this, &FTestCpp::OutMess);
 
 		CreateTagsFrame ("Superflo.prmd", PTagsRdSuper, GBWrParam);
+		//CreateTagsFrame ("RMG.prmd", PTagsRdRMG, GBWrParamRMG);
 		TrWaitInitDrv->Tick += gcnew System::EventHandler (this, &TestCpp::FTestCpp::TrWaitInitDrvOnTick);
 	}
 	///___________________________________________________________________________
@@ -61,10 +62,29 @@ namespace TestCpp
 		if (SuperfloWork == nullptr)
 		{
 			DNewDev^ NewSuper = gcnew DNewDev (this, &FTestCpp::DllLoadSuper);
-			SuperfloWork = gcnew CWorkOfDevs (NewSuper, CSuperflo::cpwDllname, PDOutMess, (CTags^)PTagsRdSuper->Controls[0]);
+			SuperfloWork = gcnew CWorkOfDevs (PDOutMess, (CTags^)PTagsRdSuper->Controls[0]);
+			DRButBlink^ Blink = gcnew DRButBlink (this, &FTestCpp::RButBlink);
+			if (SuperfloWork->Init (NewSuper, (const LPCWSTR)CSuperflo::cpwDllname, Blink) == false)
+			{
+				SuperfloWork = nullptr;
+				return;
+			}
 			SetIntervalTimerSuper += gcnew DSetIntervalTimer (SuperfloWork, &CWorkOfDevs::SetIntervalTimer);
+			NumericUpDown1_ValueChanged (nullptr, nullptr);
 			BStartStopSuper->Enabled = true;
 		}
+	}
+	///___________________________________________________________________________
+
+	void FTestCpp::RButBlink ()
+	{
+		RBRrequest->Checked = !RBRrequest->Checked;
+	}
+	///___________________________________________________________________________
+
+	void FTestCpp::RButBlinkRMG ()
+	{
+		RBRrequestRMG->Checked = !RBRrequestRMG->Checked;
 	}
 	///___________________________________________________________________________
 
@@ -98,7 +118,7 @@ namespace TestCpp
 	{
 		if (SuperfloWork->StartStop (sender, CBDevType->Text, CBComPort->Text) == CWorkOfDevs::EDrv::Work)
 		{
-			rLWaitSuper_RMG = LWaitSuper;
+			rWaitSuper_RMG = LWaitSuper;
 			TrWaitInitDrv->Start ();
 			iCountWait = 0;
 			CBDevType->Enabled = false;
@@ -124,8 +144,16 @@ namespace TestCpp
 		if (RMGwork == nullptr)
 		{
 			DNewDev^ NewRMG = gcnew DNewDev (this, &FTestCpp::DllLoadRMG);
-			RMGwork = gcnew CWorkOfDevs (NewRMG, CRMG::cpwDllname, PDOutMess, (CTags^)PTagsRdSuper->Controls[0]);
+			RMGwork = gcnew CWorkOfDevs (PDOutMess, (CTags^)PTagsRdSuper->Controls[0]);
+			DRButBlink^ BlinkRMG = gcnew DRButBlink (this, &FTestCpp::RButBlinkRMG);
+			if (RMGwork->Init (NewRMG, CRMG::cpwDllname, BlinkRMG) == false)
+			{
+				RMGwork = nullptr;
+				return;
+			}
 			SetIntervalTimerRMG += gcnew DSetIntervalTimer (SuperfloWork, &CWorkOfDevs::SetIntervalTimer);
+			NUDIntervalReqRMG_ValueChanged (nullptr, nullptr);
+			BStartStopRMG->Enabled = true;
 		}
 	}
 	///___________________________________________________________________________
@@ -135,7 +163,7 @@ namespace TestCpp
 	void TestCpp::FTestCpp::TrWaitInitDrvOnTick (System::Object^ sender, System::EventArgs^ e)
 	{
 		if (iCountWait < DELAY_RD_PARAMS)
-			rLWaitSuper_RMG->Text = Convert::ToString (iCountWait++);
+			rWaitSuper_RMG->Text = Convert::ToString (iCountWait++);
 		else
 		{
 			TrWaitInitDrv->Stop ();

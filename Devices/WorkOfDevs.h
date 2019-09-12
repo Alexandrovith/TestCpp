@@ -16,10 +16,12 @@ namespace TestCpp
 						 CTags^ TagsContainer;
 	protected: System::Windows::Forms::Timer^ TrReadDrv = gcnew System::Windows::Forms::Timer ();
 	protected: System::Collections::Hashtable^ Tags;
+	protected: DRButBlink^ RButBlink;
 
 	///___________________________________________________________________________
 	// Загрузка dll Superflo
-	public: CWorkOfDevs (DNewDev^ NewDev, LPCWSTR cpDllName, DOutMess^ OutMess, CTags^ TagsContainer);
+	public: CWorkOfDevs (DOutMess^ OutMess, CTags^ TagsContainer);
+					void Init (TestCpp::DNewDev^ NewDev, const LPCWSTR cpDllName, DRButBlink^ RButBlink);
 					EDrv StartStop (System::Object^ sender, System::String^ asDevType, System::String^ asPort);
 					void CloseDrv (System::String^ asDevMess);
 	public: void SetIntervalTimer (int iInterval);

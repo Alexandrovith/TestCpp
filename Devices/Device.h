@@ -38,5 +38,6 @@ namespace TestCpp
 	};
 
 	public delegate CDevice^ DNewDev ();
+	public delegate void DRButBlink ();
 
 }
