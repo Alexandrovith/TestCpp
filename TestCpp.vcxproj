@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataForWr.cpp" />
     <ClCompile Include="Devices\Device.cpp" />
     <ClCompile Include="Devices\RMG\RMG.cpp" />
     <ClCompile Include="Devices\Superflo\Superflo.cpp" />
@@ -160,6 +161,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataForWr.h" />
     <ClInclude Include="Devices\Device.h" />
     <ClInclude Include="Devices\RMG\RMG.h" />
     <ClInclude Include="Devices\Superflo\Superflo.h" />

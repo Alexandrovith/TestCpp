@@ -69,6 +69,9 @@
     <ClCompile Include="Tags.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DataForWr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestCpp.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataForWr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,7 +21,7 @@ namespace TestCpp
 	///___________________________________________________________________________
 	// Загрузка dll Superflo
 	public: CWorkOfDevs (DOutMess^ OutMess, CTags^ TagsContainer);
-					void Init (TestCpp::DNewDev^ NewDev, const LPCWSTR cpDllName, DRButBlink^ RButBlink);
+					bool Init (DNewDev^ NewDev, const LPCWSTR cpDllName, DRButBlink^ RButBlink);
 					EDrv StartStop (System::Object^ sender, System::String^ asDevType, System::String^ asPort);
 					void CloseDrv (System::String^ asDevMess);
 	public: void SetIntervalTimer (int iInterval);

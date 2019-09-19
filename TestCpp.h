@@ -5,6 +5,7 @@
 #include "Tags.h"
 #include "Superflo.h"
 #include "WorkOfDevs.h"
+#include "SavePropert.h"
 
 namespace TestCpp {
 
@@ -20,8 +21,12 @@ namespace TestCpp {
 	/// </summary>
 	public ref class FTestCpp : public System::Windows::Forms::Form
 	{
-#pragma region //xxxxxxxxxxxxxxxxxxxxxx    П О С Т О Я Н Н Ы Е    xxxxxxxxxxxxxxxxxxxxxxxxx
-#pragma endregion
+		//#pragma region //xxxxxxxxxxxxxxxxxxxxxx    П О С Т О Я Н Н Ы Е    xxxxxxxxxxxxxxxxxxxxxxxxx
+		//
+		//		const String^ FlSuperPrmd = "Superflo.prmd";
+		//		const String^ FlRMGPrmd = "RMG.prmd";
+		//
+		//#pragma endregion
 
 #pragma region //xxxxxxxxxxxxxxxxxxxxxx    П Е Р Е М Е Н Н Ы Е    xxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -32,12 +37,8 @@ namespace TestCpp {
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::NumericUpDown^ NUDIntervalReqSuper;
 	private: System::Windows::Forms::Button^ BStartStopRMG;
-
-
 	private: System::Windows::Forms::Button^ BLoadDllRMG;
 	public: System::Windows::Forms::Panel^ PTagsRdRMG;
-	private:
-
 	private: System::Windows::Forms::NumericUpDown^ NUDIntervalReqRMG;
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::ComboBox^ CBComPort;
@@ -50,15 +51,11 @@ namespace TestCpp {
 	private: System::Windows::Forms::GroupBox^ groupBox1;
 	private: System::Windows::Forms::TextBox^ TBWaitRMG;
 	private: System::Windows::Forms::Button^ BReloadRMGTags;
-
-
 	private: System::Windows::Forms::Label^ LWaitRMG;
 	private: System::Windows::Forms::ComboBox^ CBComPortRMG;
 	private: System::Windows::Forms::Button^ BWrRMG;
 	private: System::Windows::Forms::Button^ BScanComPortsRMG;
-
-
-
+	private: System::Windows::Forms::Button^ BStopStartDevSuper;
 
 	private: System::Windows::Forms::GroupBox^ GBWrParam;
 
@@ -114,6 +111,7 @@ namespace TestCpp {
 	private: System::Windows::Forms::Label^ label3;
 	private: System::Windows::Forms::Button^ BWrSuper;
 	private: int iCountWait;
+	private: CSavePropert^ SaveProp;
 
 #pragma region Windows Form Designer generated code
 					 /// <summary>
@@ -125,6 +123,7 @@ namespace TestCpp {
 						 this->components = (gcnew System::ComponentModel::Container ());
 						 this->GBWrParamRMG = (gcnew System::Windows::Forms::TabControl ());
 						 this->TPSuperflo = (gcnew System::Windows::Forms::TabPage ());
+						 this->BStopStartDevSuper = (gcnew System::Windows::Forms::Button ());
 						 this->CBComPort = (gcnew System::Windows::Forms::ComboBox ());
 						 this->BLoadDllSuper = (gcnew System::Windows::Forms::Button ());
 						 this->TBWaitSuper = (gcnew System::Windows::Forms::TextBox ());
@@ -183,10 +182,12 @@ namespace TestCpp {
 						 this->GBWrParamRMG->SelectedIndex = 0;
 						 this->GBWrParamRMG->Size = System::Drawing::Size (972, 293);
 						 this->GBWrParamRMG->TabIndex = 0;
+						 this->GBWrParamRMG->SelectedIndexChanged += gcnew System::EventHandler (this, &FTestCpp::GBWrParamRMG_SelectedIndexChanged);
 						 // 
 						 // TPSuperflo
 						 // 
 						 this->TPSuperflo->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+						 this->TPSuperflo->Controls->Add (this->BStopStartDevSuper);
 						 this->TPSuperflo->Controls->Add (this->CBComPort);
 						 this->TPSuperflo->Controls->Add (this->BLoadDllSuper);
 						 this->TPSuperflo->Controls->Add (this->TBWaitSuper);
@@ -209,6 +210,17 @@ namespace TestCpp {
 						 this->TPSuperflo->TabIndex = 1;
 						 this->TPSuperflo->Text = L"Superflo";
 						 this->TPSuperflo->UseVisualStyleBackColor = true;
+						 // 
+						 // BStopStartDevSuper
+						 // 
+						 this->BStopStartDevSuper->Cursor = System::Windows::Forms::Cursors::Hand;
+						 this->BStopStartDevSuper->Location = System::Drawing::Point (740, 32);
+						 this->BStopStartDevSuper->Name = L"BStopStartDevSuper";
+						 this->BStopStartDevSuper->Size = System::Drawing::Size (92, 28);
+						 this->BStopStartDevSuper->TabIndex = 15;
+						 this->BStopStartDevSuper->Text = L"Stop";
+						 this->BStopStartDevSuper->UseVisualStyleBackColor = true;
+						 this->BStopStartDevSuper->Click += gcnew System::EventHandler (this, &FTestCpp::BStopStartDevSuper_Click);
 						 // 
 						 // CBComPort
 						 // 
@@ -310,6 +322,7 @@ namespace TestCpp {
 						 this->CBDevType->Name = L"CBDevType";
 						 this->CBDevType->Size = System::Drawing::Size (92, 23);
 						 this->CBDevType->TabIndex = 8;
+						 this->CBDevType->SelectedIndexChanged += gcnew System::EventHandler (this, &FTestCpp::CBDevType_SelectedIndexChanged);
 						 // 
 						 // GBWrParam
 						 // 
@@ -572,7 +585,7 @@ namespace TestCpp {
 							 static_cast<System::Byte>(204)));
 						 this->BClose->Location = System::Drawing::Point (3, 3);
 						 this->BClose->Name = L"BClose";
-						 this->BClose->Size = System::Drawing::Size (954, 65);
+						 this->BClose->Size = System::Drawing::Size (954, 133);
 						 this->BClose->TabIndex = 0;
 						 this->BClose->Text = L"Конец - делу венец";
 						 this->BClose->UseVisualStyleBackColor = true;
@@ -615,6 +628,7 @@ namespace TestCpp {
 						 this->MaximumSize = System::Drawing::Size (988, 1900);
 						 this->Name = L"FTestCpp";
 						 this->Text = L"Тест драйверов (на cpp)";
+						 this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler (this, &FTestCpp::FTestCpp_FormClosing);
 						 this->GBWrParamRMG->ResumeLayout (false);
 						 this->TPSuperflo->ResumeLayout (false);
 						 this->TPSuperflo->PerformLayout ();
@@ -628,7 +642,7 @@ namespace TestCpp {
 
 					 }
 #pragma endregion
-	//___________________________________________________________________________
+					 //___________________________________________________________________________
 
 	private: System::Void BClose_Click (System::Object^ sender, System::EventArgs^ e)
 	{
@@ -636,9 +650,10 @@ namespace TestCpp {
 			SuperfloWork->Exit ();
 		if (RMGwork != nullptr)
 			RMGwork->Exit ();
+		SaveProp->Save ();
 		Close ();
 	}
-	//___________________________________________________________________________
+					 //___________________________________________________________________________
 
 	private: System::Void BLoadDll_Click (System::Object^ sender, System::EventArgs^ e);
 	private: System::Void BLoadDllSuper_Click (System::Object^ sender, System::EventArgs^ e);
@@ -647,22 +662,23 @@ namespace TestCpp {
 	private: System::Void BLoadDllRMG_Click (System::Object^ sender, System::EventArgs^ e);
 	private: System::Void NUDIntervalReqRMG_ValueChanged (System::Object^ sender, System::EventArgs^ e);
 					 void TrWaitInitDrvOnTick (System::Object^ sender, System::EventArgs^ e);
-					 private: void RButBlink ();
-					 private: void RButBlinkRMG ();
+	private: void RButBlink ();
+	private: void RButBlinkRMG ();
+					 //private: System::Collections::ArrayList^ GetCheckedTags (const String^ asFilePrmd);
 
-	//___________________________________________________________________________
+										//___________________________________________________________________________
 
 	private: System::Void BWrSuper_Click (System::Object^ sender, System::EventArgs^ e)
 	{
 		SuperfloWork->Write ((CTags^)GBWrParam->Controls[0]);
 	}
-	//___________________________________________________________________________
+					 //___________________________________________________________________________
 
 	private: System::Void BScanComPorts_Click (System::Object^ sender, System::EventArgs^ e)
 	{
 		ScanComPorts ();
 	}
-	//___________________________________________________________________________
+					 //___________________________________________________________________________
 
 	private: System::Void BReloadSuperTags_Click (System::Object^ sender, System::EventArgs^ e)
 	{
@@ -670,29 +686,90 @@ namespace TestCpp {
 		GBWrParam->Controls->Clear ();
 		CreateTagsFrame ("Superflo.prmd", PTagsRdSuper, GBWrParam);
 	}
+					 //___________________________________________________________________________
+
 	private: System::Void Panel1_Paint (System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 	}
-private: System::Void BStartStopRMG_Click (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void TBWaitSuper_TextChanged (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void LWaitSuper_Click (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void CBComPort_SelectedIndexChanged (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void TPRMG_Click (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void ComboBox1_SelectedIndexChanged (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void Button3_Click (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void BReloadRMGTags_Click (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void LWaitRMG_Click (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void BWrRMG_Click (System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void TBWaitRMG_TextChanged (System::Object^ sender, System::EventArgs^ e) {
-}
-};
+	private: System::Void BStartStopRMG_Click (System::Object^ sender, System::EventArgs^ e) {
+	}
+					 //___________________________________________________________________________
+
+	private: System::Void TBWaitSuper_TextChanged (System::Object^ sender, System::EventArgs^ e)
+	{
+		int iVal;
+		if (int::TryParse (TBWaitSuper->Text, iVal))
+			SaveProp->Set ("TBWaitSuper", iVal);
+		else OutMess ("Ошибка TBWaitSuper = [" + TBWaitSuper->Text + "]");
+	}
+					 //___________________________________________________________________________
+
+	private: System::Void LWaitSuper_Click (System::Object^ sender, System::EventArgs^ e) {
+	}
+					 //___________________________________________________________________________
+
+	private: System::Void CBComPort_SelectedIndexChanged (System::Object^ sender, System::EventArgs^ e)
+	{
+		SaveProp->Set ("ComPortSuper", CBComPort->Text);
+	}
+					 //___________________________________________________________________________
+
+	private: System::Void TPRMG_Click (System::Object^ sender, System::EventArgs^ e) {
+	}
+	private: System::Void ComboBox1_SelectedIndexChanged (System::Object^ sender, System::EventArgs^ e) {
+	}
+	private: System::Void Button3_Click (System::Object^ sender, System::EventArgs^ e) {
+	}
+	private: System::Void BReloadRMGTags_Click (System::Object^ sender, System::EventArgs^ e) {
+	}
+	private: System::Void LWaitRMG_Click (System::Object^ sender, System::EventArgs^ e) {
+	}
+	private: System::Void BWrRMG_Click (System::Object^ sender, System::EventArgs^ e) {
+	}
+	private: System::Void TBWaitRMG_TextChanged (System::Object^ sender, System::EventArgs^ e) {
+	}
+					 void RestProperties ();
+					 //___________________________________________________________________________
+
+	private: System::Void GBWrParamRMG_SelectedIndexChanged (System::Object^ sender, System::EventArgs^ e)
+	{
+		if (GBWrParamRMG->SelectedIndex < GBWrParamRMG->TabCount - 1) // Последняя закладка - с кнопкой выхода 
+			SaveProp->Set ("iCurrDev", GBWrParamRMG->SelectedIndex);
+	}
+					 //___________________________________________________________________________
+
+	private: System::Void CBDevType_SelectedIndexChanged (System::Object^ sender, System::EventArgs^ e)
+	{
+		SaveProp->Set (CBDevType->Name, CBDevType->Text);
+	}
+					 //___________________________________________________________________________
+
+	private: System::Void FTestCpp_FormClosing (System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
+	{
+		if (GBWrParamRMG->SelectedTab == TPClose)
+		{
+			e->Cancel = false;
+		}
+		else
+		{
+			GBWrParamRMG->SelectedTab = TPClose;
+			e->Cancel = true;
+		}
+	}
+					 //___________________________________________________________________________
+
+	private: System::Void BStopStartDevSuper_Click (System::Object^ sender, System::EventArgs^ e)
+	{
+		//if (BStopStartDevSuper->Text == "Start")
+		//{
+		//	BStopStartDevSuper->Text = "Stop";
+		//	SuperfloWork->StartStop ();
+		//}
+		//else
+		//{
+		//	BStopStartDevSuper->Text = "Start";
+
+		//}
+	}
+					 //___________________________________________________________________________
+	};
 }

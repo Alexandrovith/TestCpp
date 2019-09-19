@@ -1,5 +1,8 @@
 #pragma once
 
+#include "DataForWr.h"
+#include "SavePropert.h"
+
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -10,34 +13,33 @@ using namespace System::Drawing;
 
 namespace TestCpp
 {
-	public ref class CDataForWr
-	{
-	public:
-		System::String^ asTag;
-		System::String^ asType;
-		System::String^ asData;
-	};
-
 	/// <summary>
 	/// Summary for CRowOutPar
 	/// </summary>
 	public ref class CRowOutPar : public System::Windows::Forms::UserControl
 	{
-	public:
-		CRowOutPar(void)
-		{
-			InitializeComponent();
-		}
+	public:	CRowOutPar (int RowNumber, CSavePropert^ SaveProp, String^ CheckTags)
+	{
+		InitializeComponent ();
+		iRowNumber = RowNumber;
+		this->SaveProp = SaveProp;
+		asCheckTags = CheckTags;
+	}
+
 	public:	void FillControlByName (System::String^ asContrtolName, System::String^ asTextToWr);
+					void FillCheckBox (bool bStateChB);
 					System::String^ GetTagDataRow (System::String^ asDevName, int& iTagId);
 					System::String^ GetTagDataRowChecked (System::String^ asDevName, int& iTagId);
 					CDataForWr^ GetTagWrRowChecked (System::String^ asDevName);
 
+					int iRowNumber;
+					CSavePropert^ SaveProp;
+					String^ asCheckTags;
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		~CRowOutPar()
+		~CRowOutPar ()
 		{
 			if (components)
 			{
@@ -56,14 +58,14 @@ namespace TestCpp
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+		System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
-		void InitializeComponent(void)
+		void InitializeComponent (void)
 		{
 			this->TBRequestName = (gcnew System::Windows::Forms::TextBox ());
 			this->TBParamName = (gcnew System::Windows::Forms::TextBox ());
@@ -104,6 +106,7 @@ namespace TestCpp
 			this->ChBSelectRow->Size = System::Drawing::Size (15, 14);
 			this->ChBSelectRow->TabIndex = 2;
 			this->ChBSelectRow->UseVisualStyleBackColor = true;
+			this->ChBSelectRow->CheckedChanged += gcnew System::EventHandler (this, &CRowOutPar::ChBSelectRow_CheckedChanged);
 			// 
 			// TBType
 			// 
@@ -131,5 +134,9 @@ namespace TestCpp
 
 		}
 #pragma endregion
+	private: System::Void ChBSelectRow_CheckedChanged (System::Object^ sender, System::EventArgs^ e)
+	{
+		SaveProp->Set (asCheckTags, ChBSelectRow->Checked);
+	}
 	};
 }

@@ -84,4 +84,10 @@ namespace TestCpp
 		Close ();
 	}
 	//_____________________________________________________________________________
+
+	void CDevice::StopStartDevice (char* cpDevConfig, bool bStop)
+	{
+		StopStartDev (cpDevConfig, bStop);
+	}
+	//_____________________________________________________________________________
 }

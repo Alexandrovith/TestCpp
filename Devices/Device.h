@@ -32,6 +32,7 @@ namespace TestCpp
 		virtual int InitDev (System::String^ asDevType, System::String^ asPort) = 0;
 		virtual int RunSubscribe (System::Collections::Hashtable^ TagList);
 		virtual void CloseDev ();
+		virtual void StopStartDevice (char* cpDevConfig, bool bStop);
 		
 	protected: DOutMess^ OutMess;
 	public: void DllLoad (const LPCWSTR cpDll);

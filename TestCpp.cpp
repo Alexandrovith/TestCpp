@@ -17,10 +17,11 @@ namespace TestCpp
 	{
 		InitializeComponent ();
 
-		CBDevType->SelectedIndex = 0;
-		ScanComPorts ();
 		asPathExe = Path::GetDirectoryName (System::Reflection::Assembly::GetExecutingAssembly ()->Location);// System::IO::Directory::GetCurrentDirectory ();
 		PDOutMess = gcnew DOutMess (this, &FTestCpp::OutMess);
+		RestProperties ();
+
+		ScanComPorts ();
 
 		CreateTagsFrame ("Superflo.prmd", PTagsRdSuper, GBWrParam);
 		//CreateTagsFrame ("RMG.prmd", PTagsRdRMG, GBWrParamRMG);
@@ -33,7 +34,10 @@ namespace TestCpp
 		SerialPort^ Port = gcnew SerialPort ();
 		CBComPort->Items->Clear ();
 		CBComPort->Items->AddRange (Port->GetPortNames ());
-		CBComPort->SelectedIndex = CBComPort->FindString ("COM13");
+
+		auto ValRd = SaveProp->Get ("ComPortSuper");
+		if (ValRd != nullptr)
+			CBComPort->SelectedIndex = CBComPort->FindString (static_cast<String^>(ValRd));
 		if (CBComPort->SelectedIndex == -1)
 			CBComPort->SelectedIndex = 0;
 	}
@@ -43,7 +47,8 @@ namespace TestCpp
 	{
 		CTags^ TgsRd = TagFrameNew (ParentRd);
 		CTags^ TgsRw = TagFrameNew (ParentWr);
-		CSerialize::ReadFl (asPathExe + "\\" + (String^)asFilePrmd, TgsRd->PShowParams, TgsRw->PShowParams, PDOutMess);
+		CSerialize^ Serialize = gcnew CSerialize (PDOutMess, SaveProp);
+		Serialize->ReadFlSetups (asPathExe + "\\" + (String^)asFilePrmd, TgsRd->PShowParams, TgsRw->PShowParams/*, PDOutMess, GetCheckedTags (asFilePrmd)*/);
 	}
 	///___________________________________________________________________________
 
@@ -130,12 +135,14 @@ namespace TestCpp
 	System::Void FTestCpp::NumericUpDown1_ValueChanged (System::Object^ sender, System::EventArgs^ e)
 	{
 		SetIntervalTimerSuper (static_cast<int> (NUDIntervalReqSuper->Value));
+		SaveProp->Set ("NUDIntervalReqSuper", NUDIntervalReqSuper->Value);
 	}
 	///___________________________________________________________________________
 
 	System::Void FTestCpp::NUDIntervalReqRMG_ValueChanged (System::Object^ sender, System::EventArgs^ e)
 	{
 		SetIntervalTimerRMG (static_cast<int> (NUDIntervalReqRMG->Value));
+		SaveProp->Set ("NUDIntervalReqRMG", NUDIntervalReqSuper->Value);
 	}
 	///___________________________________________________________________________
 
@@ -169,5 +176,30 @@ namespace TestCpp
 			TrWaitInitDrv->Stop ();
 		}
 	}
+	///___________________________________________________________________________
+
+	void TestCpp::FTestCpp::RestProperties ()
+	{
+		SaveProp = gcnew CSavePropert (asPathExe, PDOutMess);
+		//SaveProp->Add ("iCurrDev", 0);
+		auto ValRd = SaveProp->Get ("iCurrDev");
+		if (ValRd != nullptr)
+			GBWrParamRMG->SelectedIndex = static_cast<int>(ValRd);
+		ValRd = SaveProp->Get ("NUDIntervalReqSuper");
+		if (ValRd != nullptr)
+			NUDIntervalReqSuper->Value = static_cast<System::Decimal>(ValRd);
+		ValRd = SaveProp->Get ("NUDIntervalReqSuper");
+		if (ValRd != nullptr)
+			NUDIntervalReqSuper->Value = static_cast<System::Decimal>(ValRd);
+		ValRd = SaveProp->Get ("CBDevType");
+		if (ValRd != nullptr)
+			CBDevType->SelectedIndex = CBDevType->FindString (static_cast<System::String^>(ValRd));
+		ValRd = SaveProp->Get ("TBWaitSuper");
+		if (ValRd != nullptr)
+			TBWaitSuper->Text = (static_cast<int>(ValRd)).ToString ();
+
+	}
 }
+
+
 

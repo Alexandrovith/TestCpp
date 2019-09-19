@@ -4,6 +4,7 @@
 #include "ManagedConvert.h"
 #include "WorkOfDevs.h"
 #include "Device.h"
+#include "DataForWr.h"
 
 namespace TestCpp
 {
@@ -16,10 +17,9 @@ namespace TestCpp
 		TrReadDrv->Tick += gcnew System::EventHandler (this, &TestCpp::CWorkOfDevs::TrRdVals_OnTick);
 	}
 	//___________________________________________________________________________
-
-	void CWorkOfDevs::Init (DNewDev^ NewDev, const LPCWSTR cpDllName, DRButBlink^ RButBlink)
+									
+	bool CWorkOfDevs::Init (DNewDev^ NewDev, const LPCWSTR cpDllName, DRButBlink^ RButBlink)
 	{
-
 		if (Device == nullptr)
 		{
 			try
@@ -30,11 +30,19 @@ namespace TestCpp
 			catch (const std::exception& exc)
 			{
 				OutMess (Device->DevName + ": " + CConvMarsh::Convert (exc.what ()));
-				return;
+				Device = nullptr;
+				return false;
+			}
+			catch (System::Exception^ exc)
+			{
+				OutMess (Device->DevName + ": " + exc->Message);
+				Device = nullptr;
+				return false;
 			}
 			this->RButBlink = RButBlink;
 			OutMess (Device->DevName + ": dll загружена");
 		}
+		return true;
 	}
 	//___________________________________________________________________________
 

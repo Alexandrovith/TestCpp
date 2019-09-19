@@ -16,6 +16,12 @@ namespace TestCpp
 	}
 	//___________________________________________________________________________
 
+	void CRowOutPar::FillCheckBox (bool bStateChB)
+	{
+		ChBSelectRow->Checked = bStateChB;
+	}
+	//___________________________________________________________________________
+
 	System::String^ CRowOutPar::GetTagDataRow (System::String^ asDevName, int& iTagId)
 	{//\"Name\":\"RunNumber\",
 		System::String^ asTag = String::Format("{3}\"DeviceName\":\"{0}\",\"RequestName\":\"{1}\",\"ParamName\":\"{2}\",\"ParamsOutList\":[{3}{5}\"Value\":\"1\"{4}]{4}", 
